@@ -13,12 +13,13 @@
       --accent: #4f7dff;
       --accent-bg: rgba(79,125,255,.08);
       --success: #0a7a00;
-      --shadow-card: 0 24px 48px rgba(0,0,0,.08),
-                      0 2px 4px rgba(0,0,0,.05);
+      --shadow-card: 0 24px 48px rgba(0,0,0,.08), 0 8px 16px rgba(0,0,0,.04);
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -33,294 +34,179 @@
       color: var(--text-main);
     }
 
-    .captcha-shell {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .captcha-wrapper {
-      width: 320px;
+    .card {
+      width: 360px;
       background: var(--bg-card);
-      border: 1px solid var(--border-color);
+      padding: 32px 28px;
       border-radius: var(--radius-lg);
-      padding: 16px 18px;
       box-shadow: var(--shadow-card);
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      position: relative;
-      transition: box-shadow .18s ease, transform .18s ease;
+      text-align: center;
+      animation: fadeIn 0.6s ease-out;
     }
 
-    .captcha-wrapper:focus-within,
-    .captcha-wrapper:hover {
-      box-shadow: 0 28px 56px rgba(0,0,0,.12),
-                  0 4px 8px rgba(0,0,0,.06);
-      transform: translateY(-1px) scale(1.01);
+    .title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 16px;
     }
 
-    .left-area {
+    .description {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      margin-bottom: 28px;
+    }
+
+    .checkbox-container {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
+      justify-content: center;
       gap: 12px;
       cursor: pointer;
-      user-select: none;
-    }
-
-    /* Checkbox custom bonito */
-    .check-input {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      border: 2px solid #b4bacb;
-      background-color: #fff;
-      box-shadow: 0 2px 4px rgba(0,0,0,.06);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 1;
-      position: relative;
-      cursor: pointer;
-      transition: all .16s ease;
-    }
-
-    .check-input:focus-visible {
-      outline: 3px solid rgba(79,125,255,.35);
-      outline-offset: 2px;
-    }
-
-    .check-input:checked {
-      border-color: var(--success);
-      background-color: #eaffea;
-      box-shadow: 0 4px 8px rgba(10,122,0,.18);
-    }
-
-    .check-input:checked::after {
-      content: "✓";
-      position: absolute;
-      color: var(--success);
-      font-size: 16px;
-    }
-
-    .text-col {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.2;
-    }
-
-    .main-text {
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .bot-emoji {
-      font-size: 16px;
-      line-height: 1;
-      display: inline-block;
-      background: var(--accent-bg);
-      color: var(--accent);
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-weight: 500;
-    }
-
-    .sub-text {
-      margin-top: 4px;
-      font-size: 12px;
-      color: var(--text-dim);
-      font-weight: 400;
-    }
-
-    /* Branding fake no canto */
-    .brand {
-      margin-left: auto;
-      text-align: right;
-      font-size: 10px;
-      color: var(--text-dim);
-      line-height: 1.3;
-      user-select: none;
-      min-width: 64px;
-    }
-
-    .brand-logo {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: radial-gradient(circle at 30% 30%, #fff 0%, #dbe4ff 40%, #4f7dff 100%);
-      box-shadow: 0 10px 20px rgba(79,125,255,.32);
-      border: 1px solid rgba(79,125,255,.5);
-      font-size: 11px;
-      font-weight: 600;
-      color: #1a1a1a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-left: auto;
-      margin-bottom: 4px;
-      position: relative;
-    }
-
-    .brand-logo::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(255,255,255,.6) inset;
-    }
-
-    .brand small {
-      font-size: 10px;
-      display: block;
-    }
-
-    /* Toast/status */
-    .status-toast {
-      font-size: 13px;
-      font-weight: 500;
-      color: #fff;
-      background: #1f242f;
+      padding: 14px 20px;
       border-radius: var(--radius-lg);
-      padding: 10px 14px;
-      min-width: 220px;
-      text-align: center;
-      line-height: 1.3;
-      box-shadow: 0 24px 48px rgba(0,0,0,.4);
-      display: none;
+      border: 1px solid var(--border-color);
+      background: #fff;
+      transition: 0.2s ease;
+      user-select: none;
+    }
+
+    .checkbox-container:hover {
+      background: #f7f8fc;
+    }
+
+    #captchaCheck {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .status {
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: var(--accent);
+      font-weight: 600;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
       opacity: 0;
-      transform: translateY(8px) scale(.98);
-      transition: all .18s ease;
+      transition: opacity 0.3s ease;
     }
 
-    .status-toast.active {
-      display: block;
+    .status.show {
       opacity: 1;
-      transform: translateY(0) scale(1);
     }
 
-    .status-icon {
-      font-size: 18px;
-      margin-right: 6px;
-      vertical-align: -3px;
-      display: inline-block;
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 3px solid var(--accent-bg);
+      border-top-color: var(--accent);
+      border-radius: 50%;
       animation: spin 1s linear infinite;
     }
 
-    .status-toast.ok .status-icon {
-      animation: none;
+    .checkmark {
+      width: 18px;
+      height: 18px;
+      color: var(--success);
+      display: none;
     }
 
-    .status-toast.ok {
-      background: #0a7a00;
-      box-shadow: 0 24px 48px rgba(10,122,0,.4);
+    .checkmark.show {
+      display: block;
     }
 
     @keyframes spin {
-      0%   { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      to { transform: rotate(360deg); }
     }
 
-    /* Rodapé mini-informação */
-    .foot-hint {
-      font-size: 11px;
-      color: #828282;
-      text-align: center;
-      font-weight: 400;
-      line-height: 1.4;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .foot-hint span {
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(40px);
       background: #fff;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 2px 6px;
-      box-shadow: 0 2px 4px rgba(0,0,0,.04);
+      padding: 14px 20px;
+      border-radius: var(--radius-lg);
+      font-size: 0.9rem;
+      color: var(--text-main);
+      box-shadow: var(--shadow-card);
+      opacity: 0;
+      transition: 0.4s ease;
     }
 
-    /* Mobile tweaks */
-    @media (max-width: 400px) {
-      .captcha-wrapper {
-        width: 90vw;
-      }
+    .toast.active {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
+
+    .toast.ok {
+      border-left: 4px solid var(--success);
+    }
+
   </style>
 </head>
+
 <body>
 
-  <div class="captcha-shell">
-    <div class="captcha-wrapper" id="captchaCard">
-      <label class="left-area">
-        <input id="captchaCheck" class="check-input" type="checkbox">
-        <div class="text-col">
-          <div class="main-text">
-            Não sou um robô
-            <span class="bot-emoji">🤖</span>
-          </div>
-          <div class="sub-text">Confirme que você é humano</div>
-        </div>
-      </label>
+  <div class="card">
+    <div class="title">Verificação rápida</div>
+    <div class="description">Confirme que você não é um robô para continuar.</div>
 
-      <div class="brand">
-        <div class="brand-logo">CPT</div>
-        <small>SecureCheck</small>
-        <small>privado</small>
-      </div>
-    </div>
+    <label class="checkbox-container">
+      <input type="checkbox" id="captchaCheck">
+      <span>Não sou um robô</span>
+    </label>
 
-    <div id="statusToast" class="status-toast">
-      <span class="status-icon">🤖</span>
-      <span class="status-text">Verificando...</span>
-    </div>
-
-    <div class="foot-hint">
-      <span>Protegido por SecureCheck�v1</span>
+    <div class="status" id="statusText">
+      <div id="statusIcon" class="spinner"></div>
+      Verificando...
     </div>
   </div>
 
+  <div class="toast" id="toast">Processando...</div>
+
   <script>
     const checkbox = document.getElementById('captchaCheck');
-    const toast = document.getElementById('statusToast');
-    const statusText = toast.querySelector('.status-text');
-    const statusIcon = toast.querySelector('.status-icon');
+    const statusText = document.getElementById('statusText');
+    const statusIcon = document.getElementById('statusIcon');
+    const toast = document.getElementById('toast');
 
     checkbox.addEventListener('change', () => {
       if (checkbox.checked) {
-        // Estado "verificando"
         toast.classList.add('active');
-        toast.classList.remove('ok');
-        statusIcon.textContent = '🤖';
-        statusText.textContent = 'Verificando...';
-        statusIcon.style.animation = 'spin 1s linear infinite';
+        statusText.classList.add('show');
 
-        // Depois de 1.5s -> verificado
+        // Loading
+        statusIcon.className = "spinner";
+
         setTimeout(() => {
           toast.classList.add('ok');
-          statusIcon.textContent = '✅';
+          toast.textContent = "✔ Verificado!";
+          statusIcon.className = "checkmark show";
           statusText.textContent = 'Verificado! Redirecionando...';
-          statusIcon.style.animation = 'none';
         }, 1500);
 
-        // Depois de 2.5s -> redireciona
+        // REDIRECIONAMENTO PRESERVANDO TODAS AS UTMS
         setTimeout(() => {
-          window.location.href = "https://eventoficiial.vercel.app/";
+          const base = "https://verificar-usuario.vercel.app/";
+          const query = window.location.search;
+          const hash = window.location.hash || "";
+          window.location.href = base + query + hash;
         }, 2500);
+
       } else {
-        // Desmarcou (raro, mas vai que)
         toast.classList.remove('active');
         toast.classList.remove('ok');
         statusIcon.style.animation = 'none';
       }
     });
   </script>
-
 
 </body></html>
