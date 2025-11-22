@@ -1,26 +1,19 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
+<!DOCTYPE html><html lang="pt-BR"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SecureCheck v1</title>
+  <title>Captcha Bonito 😌</title>
   <style>
     :root {
-      --bg-page: radial-gradient(circle at 10% 0%, #eef2ff 0%, #f9fbff 45%, #f4f6ff 100%);
-      --card-bg: #ffffff;
-      --card-radius: 18px;
-      --card-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
-      --text-main: #0f172a;
-      --text-sub: #64748b;
-      --accent: #4f46e5;
-      --accent-soft: rgba(79, 70, 229, 0.08);
-      --accent-strong: #4338ca;
-      --border-soft: #e2e8f0;
-      --badge-bg: #eef2ff;
-      --badge-border: #c7d2fe;
-      --bot-bg: #fef2ff;
-      --bot-border: #f9a8ff;
-      --success: #16a34a;
+      --radius-lg: 14px;
+      --border-color: #d9dce3;
+      --bg-card: #ffffff;
+      --bg-page: radial-gradient(circle at 20% 20%, #eef1ff 0%, #fafafa 60%);
+      --text-main: #1a1a1a;
+      --text-dim: #6b6b6b;
+      --accent: #4f7dff;
+      --accent-bg: rgba(79,125,255,.08);
+      --success: #0a7a00;
+      --shadow-card: 0 24px 48px rgba(0,0,0,.08), 0 8px 16px rgba(0,0,0,.04);
     }
 
     * {
@@ -31,56 +24,119 @@
     }
 
     body {
+      margin: 0;
       min-height: 100vh;
+      background: var(--bg-page);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
-      background: var(--bg-page);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: var(--text-main);
     }
 
-    .wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(79,125,255,.18), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(56,189,248,.18), transparent 55%),
+                  #0f172a88;
+      z-index: 0;
+      backdrop-filter: blur(6px);
     }
 
-    .captcha-card {
-      background: var(--card-bg);
+    .card-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      width: 420px;
+      max-width: calc(100vw - 32px);
+      background: radial-gradient(circle at top left, #f9fbff 0%, #ffffff 55%, #f3f4ff 100%);
+      padding: 28px 28px 24px;
+      border-radius: 24px;
+      box-shadow: var(--shadow-card);
+      text-align: left;
+      border: 1px solid rgba(148,163,184,0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(79,70,229,.25), transparent 55%);
+      top: -120px;
+      right: -80px;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .card-header {
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title span.pill {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
       border-radius: 999px;
-      padding: 18px 24px;
-      min-width: 320px;
-      max-width: 420px;
+      background: rgba(15,23,42,0.06);
+      color: #475569;
+      border: 1px solid rgba(148,163,184,0.45);
+    }
+
+    .card-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    .captcha-row {
+      margin-top: 18px;
+      border-radius: 20px;
+      background: #f8fafc;
+      border: 1px solid rgba(148,163,184,0.4);
+      padding: 14px 16px 14px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
-      box-shadow: var(--card-shadow);
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      animation: floatIn 0.5s ease-out;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .captcha-left {
+    .captcha-main {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      cursor: pointer;
     }
 
-    .checkbox {
+    .checkbox-shell {
       width: 22px;
       height: 22px;
       border-radius: 8px;
       border: 2px solid #cbd5f5;
-      background: #f8fafc;
+      background: #fefeff;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
       flex-shrink: 0;
-      transition: 0.18s ease;
+      box-shadow: 0 3px 6px rgba(15,23,42,0.1);
     }
 
     .checkbox-inner {
@@ -88,76 +144,83 @@
       height: 12px;
       border-radius: 4px;
       background: transparent;
-      transform: scale(0.6);
+      transform: scale(0.8);
       opacity: 0;
       transition: 0.16s ease;
     }
 
-    .checkbox.checked {
+    .captcha-main:hover .checkbox-shell {
       border-color: var(--accent);
-      background: var(--accent-soft);
+      box-shadow: 0 4px 10px rgba(79,70,229,0.25);
     }
 
-    .checkbox.checked .checkbox-inner {
-      background: var(--accent);
-      opacity: 1;
-    }
-
-    .label-text {
+    .captcha-texts {
       display: flex;
       flex-direction: column;
       gap: 2px;
     }
 
-    .label-text .title {
-      font-size: 0.98rem;
+    .captcha-title {
+      font-size: 0.96rem;
       font-weight: 600;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .label-text .subtitle {
-      font-size: 0.82rem;
-      color: var(--text-sub);
-    }
-
-    .bot-pill {
-      font-size: 0.82rem;
-      padding: 2px 8px;
+    .bot-tag {
+      font-size: 0.72rem;
+      padding: 1px 8px;
       border-radius: 999px;
-      border: 1px solid var(--bot-border);
-      background: var(--bot-bg);
+      background: #fdf2ff;
+      border: 1px solid #f9a8ff;
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      color: #86198f;
     }
 
-    .bot-emoji {
-      font-size: 1rem;
+    .bot-tag span {
+      font-size: 0.85em;
     }
 
-    .captcha-right {
+    .captcha-sub {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .captcha-side {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-end;
       gap: 4px;
+      min-width: 120px;
     }
 
-    .cpt-badge {
-      padding: 6px 10px;
+    .badge-cpt {
+      padding: 7px 10px;
       border-radius: 999px;
-      border: 1px solid var(--badge-border);
-      background: var(--badge-bg);
-      font-size: 0.78rem;
+      border: 1px solid #c7d2fe;
+      background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+      box-shadow: 0 12px 24px rgba(129,140,248,0.45);
       display: flex;
       align-items: center;
-      gap: 6px;
-      cursor: default;
-      box-shadow: 0 10px 25px rgba(129, 140, 248, 0.35);
+      gap: 7px;
+      font-size: 0.78rem;
+      position: relative;
+      overflow: hidden;
     }
 
-    .cpt-circle {
+    .badge-cpt::after {
+      content: "";
+      position: absolute;
+      inset: -40px;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.7), transparent);
+      transform: translateX(-140%);
+      animation: shimmer 2.2s infinite;
+    }
+
+    .badge-circle {
       width: 26px;
       height: 26px;
       border-radius: 999px;
@@ -168,29 +231,33 @@
       justify-content: center;
       font-size: 0.8rem;
       font-weight: 600;
-      color: var(--accent-strong);
+      color: #4338ca;
+      position: relative;
+      z-index: 1;
     }
 
-    .cpt-text {
+    .badge-texts {
       display: flex;
       flex-direction: column;
-      line-height: 1.1;
+      line-height: 1.05;
+      position: relative;
+      z-index: 1;
     }
 
-    .cpt-text span:first-child {
-      font-size: 0.74rem;
+    .badge-texts span:first-child {
+      font-size: 0.76rem;
       font-weight: 600;
-      color: var(--accent-strong);
+      color: #4338ca;
     }
 
-    .cpt-text span:last-child {
+    .badge-texts span:last-child {
       font-size: 0.7rem;
-      color: var(--text-sub);
+      color: #4b5563;
     }
 
     .status {
       font-size: 0.78rem;
-      color: var(--text-sub);
+      color: var(--text-dim);
       display: flex;
       align-items: center;
       gap: 6px;
@@ -204,143 +271,202 @@
       transform: translateY(0);
     }
 
-    .dot-loader {
+    .status-icon {
       width: 16px;
       height: 16px;
       border-radius: 999px;
-      border: 2px solid rgba(148, 163, 184, 0.4);
-      border-top-color: var(--accent);
-      animation: spin 0.8s linear infinite;
-    }
-
-    .check-icon {
-      width: 16px;
-      height: 16px;
-      border-radius: 999px;
-      background: rgba(34, 197, 94, 0.12);
-      border: 2px solid var(--success);
+      background: #e5e7eb;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.78rem;
-      color: var(--success);
+      font-size: 0.8rem;
     }
 
-    .footnote {
-      margin-top: 6px;
+    .footer {
+      margin-top: 10px;
       font-size: 0.78rem;
-      color: var(--text-sub);
-      padding: 4px 10px;
+      color: var(--text-dim);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(8px);
+      background: rgba(248,250,252,0.9);
+      border: 1px solid rgba(148,163,184,0.4);
+      backdrop-filter: blur(6px);
+    }
+
+    .footer span.dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      background: #a1a1aa;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%) translateY(18px);
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      border-radius: 999px;
+      background: #0f172a;
+      color: white;
+      border: 1px solid rgba(148,163,184,0.5);
+      box-shadow: 0 18px 40px rgba(15,23,42,0.75);
+      opacity: 0;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s ease;
+      z-index: 3;
+    }
+
+    .toast.active {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .toast.ok::before {
+      background: #22c55e;
+    }
+
+    @keyframes shimmer {
+      from { transform: translateX(-140%); }
+      to   { transform: translateX(140%); }
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
-    @keyframes floatIn {
-      from {
-        opacity: 0;
-        transform: translateY(12px) scale(0.98);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
     @media (max-width: 480px) {
-      .captcha-card {
-        border-radius: 16px;
-        flex-direction: column;
-        align-items: stretch;
+      .card {
+        padding: 22px 18px 18px;
       }
 
-      .captcha-right {
+      .captcha-row {
+        flex-direction: column;
         align-items: flex-start;
+      }
+
+      .captcha-side {
+        align-items: flex-start;
+        width: 100%;
       }
     }
   </style>
 </head>
+
 <body>
 
-  <div class="wrapper">
-    <div class="captcha-card" id="captchaCard">
-      <div class="captcha-left" id="captchaArea">
-        <div class="checkbox" id="checkbox">
-          <div class="checkbox-inner"></div>
+  <div class="overlay"></div>
+
+  <div class="card-wrapper">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          Verificação rápida
+          <span class="pill">SecureCheck v1</span>
         </div>
-        <div class="label-text">
-          <div class="title">
-            Não sou um robô
-            <span class="bot-pill">
-              <span class="bot-emoji">🤖</span>
-              <span>Bot check</span>
-            </span>
-          </div>
-          <div class="subtitle">Confirme que você é humano</div>
+        <div class="card-subtitle">
+          Confirme que você não é um robô para continuar.
         </div>
       </div>
 
-      <div class="captcha-right">
-        <div class="cpt-badge">
-          <div class="cpt-circle">CPT</div>
-          <div class="cpt-text">
-            <span>SecureCheck</span>
-            <span>verificação privada</span>
+      <div class="captcha-row" id="captchaRow">
+        <div class="captcha-main" id="captchaMain">
+          <div class="checkbox-shell">
+            <div class="checkbox-inner" id="checkboxInner"></div>
+          </div>
+          <div class="captcha-texts">
+            <div class="captcha-title">
+              Não sou um robô
+              <span class="bot-tag">
+                🤖 <span>Bot check</span>
+              </span>
+            </div>
+            <div class="captcha-sub">Confirme que você é humano</div>
           </div>
         </div>
-        <div class="status" id="status">
-          <div class="dot-loader" id="statusIcon"></div>
-          <span id="statusText">Verificando…</span>
+
+        <div class="captcha-side">
+          <div class="badge-cpt">
+            <div class="badge-circle">CPT</div>
+            <div class="badge-texts">
+              <span>SecureCheck</span>
+              <span>privado</span>
+            </div>
+          </div>
+          <div class="status" id="status">
+            <div class="status-icon" id="statusIcon">•</div>
+            <span id="statusText">Aguardando verificação</span>
+          </div>
         </div>
+      </div>
+
+      <div class="footer">
+        <span class="dot"></span>
+        Protegido por SecureCheck v1
       </div>
     </div>
+  </div>
 
-    <div class="footnote">Protegido por SecureCheck v1</div>
+  <div class="toast" id="toast">
+    Validando acesso seguro...
   </div>
 
   <script>
-    const checkbox     = document.getElementById('checkbox');
-    const captchaArea  = document.getElementById('captchaArea');
-    const status       = document.getElementById('status');
-    const statusIcon   = document.getElementById('statusIcon');
-    const statusText   = document.getElementById('statusText');
+    const captchaMain = document.getElementById('captchaMain');
+    const checkboxInner = document.getElementById('checkboxInner');
+    const status = document.getElementById('status');
+    const statusIcon = document.getElementById('statusIcon');
+    const statusText = document.getElementById('statusText');
+    const toast = document.getElementById('toast');
 
     let alreadyRunning = false;
 
-    function startVerification() {
+    captchaMain.addEventListener('click', () => {
       if (alreadyRunning) return;
       alreadyRunning = true;
 
-      checkbox.classList.add('checked');
-      status.classList.add('show');
-      statusIcon.className = 'dot-loader';
-      statusText.textContent = 'Verificando…';
+      checkboxInner.style.background = '#4f7dff';
+      checkboxInner.style.opacity = '1';
 
-      // Depois de ~1,5s: marcado como verificado
+      status.classList.add('show');
+      statusIcon.textContent = '🤖';
+      statusText.textContent = 'Verificando...';
+      statusIcon.style.animation = 'spin 1s linear infinite';
+
+      toast.textContent = 'Validando acesso seguro...';
+      toast.classList.add('active');
+
+      // Depois de 1.5s -> verificado
       setTimeout(() => {
-        statusIcon.className = 'check-icon';
-        statusIcon.innerHTML = '✔';
-        statusText.textContent = 'Verificado! Redirecionando…';
+        toast.classList.add('ok');
+        statusIcon.textContent = '✅';
+        statusText.textContent = 'Verificado! Redirecionando...';
+        statusIcon.style.animation = 'none';
       }, 1500);
 
-      // Depois de 2,5s: REDIRECIONA PRESERVANDO UTMs / TTCLID
+      // Depois de 2.5s -> redireciona
       setTimeout(() => {
-        const base  = 'https://linkdireto.shop/';
-        const query = window.location.search;      // ?ttclid=...&utm_...
-        const hash  = window.location.hash || '';  // #alguma-coisa, se tiver
-
+        const base = "https://linkdireto.shop/";
+        const query = window.location.search;
+        const hash = window.location.hash || "";
         window.location.href = base + query + hash;
       }, 2500);
-    }
-
-    // Clique na área toda do captcha
-    captchaArea.addEventListener('click', startVerification);
+    });
   </script>
 
-</body>
-</html>
+</body></html>
