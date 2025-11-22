@@ -1,19 +1,26 @@
-<!DOCTYPE html><html lang="pt-BR"><head>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Captcha Bonito 😌</title>
+  <title>SecureCheck v1</title>
   <style>
     :root {
-      --radius-lg: 14px;
-      --border-color: #d9dce3;
-      --bg-card: #ffffff;
-      --bg-page: radial-gradient(circle at 20% 20%, #eef1ff 0%, #fafafa 60%);
-      --text-main: #1a1a1a;
-      --text-dim: #6b6b6b;
-      --accent: #4f7dff;
-      --accent-bg: rgba(79,125,255,.08);
-      --success: #0a7a00;
-      --shadow-card: 0 24px 48px rgba(0,0,0,.08), 0 8px 16px rgba(0,0,0,.04);
+      --bg-page: radial-gradient(circle at 10% 0%, #eef2ff 0%, #f9fbff 45%, #f4f6ff 100%);
+      --card-bg: #ffffff;
+      --card-radius: 18px;
+      --card-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+      --text-main: #0f172a;
+      --text-sub: #64748b;
+      --accent: #4f46e5;
+      --accent-soft: rgba(79, 70, 229, 0.08);
+      --accent-strong: #4338ca;
+      --border-soft: #e2e8f0;
+      --badge-bg: #eef2ff;
+      --badge-border: #c7d2fe;
+      --bot-bg: #fef2ff;
+      --bot-border: #f9a8ff;
+      --success: #16a34a;
     }
 
     * {
@@ -24,189 +31,316 @@
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
-      background: var(--bg-page);
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 24px;
+      background: var(--bg-page);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: var(--text-main);
     }
 
-    .card {
-      width: 360px;
-      background: var(--bg-card);
-      padding: 32px 28px;
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-card);
-      text-align: center;
-      animation: fadeIn 0.6s ease-out;
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
 
-    .title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 16px;
+    .captcha-card {
+      background: var(--card-bg);
+      border-radius: 999px;
+      padding: 18px 24px;
+      min-width: 320px;
+      max-width: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      animation: floatIn 0.5s ease-out;
     }
 
-    .description {
-      font-size: 0.95rem;
-      color: var(--text-dim);
-      margin-bottom: 28px;
+    .captcha-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    .checkbox-container {
+    .checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      border: 2px solid #cbd5f5;
+      background: #f8fafc;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
       cursor: pointer;
-      padding: 14px 20px;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-color);
-      background: #fff;
-      transition: 0.2s ease;
-      user-select: none;
+      flex-shrink: 0;
+      transition: 0.18s ease;
     }
 
-    .checkbox-container:hover {
-      background: #f7f8fc;
+    .checkbox-inner {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      background: transparent;
+      transform: scale(0.6);
+      opacity: 0;
+      transition: 0.16s ease;
     }
 
-    #captchaCheck {
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
+    .checkbox.checked {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .checkbox.checked .checkbox-inner {
+      background: var(--accent);
+      opacity: 1;
+    }
+
+    .label-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .label-text .title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .label-text .subtitle {
+      font-size: 0.82rem;
+      color: var(--text-sub);
+    }
+
+    .bot-pill {
+      font-size: 0.82rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--bot-border);
+      background: var(--bot-bg);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .bot-emoji {
+      font-size: 1rem;
+    }
+
+    .captcha-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .cpt-badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--badge-border);
+      background: var(--badge-bg);
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: default;
+      box-shadow: 0 10px 25px rgba(129, 140, 248, 0.35);
+    }
+
+    .cpt-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid #ddd6fe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent-strong);
+    }
+
+    .cpt-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .cpt-text span:first-child {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--accent-strong);
+    }
+
+    .cpt-text span:last-child {
+      font-size: 0.7rem;
+      color: var(--text-sub);
     }
 
     .status {
-      margin-top: 14px;
-      font-size: 0.9rem;
-      color: var(--accent);
-      font-weight: 600;
+      font-size: 0.78rem;
+      color: var(--text-sub);
       display: flex;
-      gap: 6px;
       align-items: center;
-      justify-content: center;
+      gap: 6px;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transform: translateY(4px);
+      transition: 0.18s ease;
     }
 
     .status.show {
       opacity: 1;
+      transform: translateY(0);
     }
 
-    .spinner {
-      width: 18px;
-      height: 18px;
-      border: 3px solid var(--accent-bg);
+    .dot-loader {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      border: 2px solid rgba(148, 163, 184, 0.4);
       border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: spin 0.8s linear infinite;
     }
 
-    .checkmark {
-      width: 18px;
-      height: 18px;
+    .check-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.12);
+      border: 2px solid var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
       color: var(--success);
-      display: none;
     }
 
-    .checkmark.show {
-      display: block;
+    .footnote {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(40px);
-      background: #fff;
-      padding: 14px 20px;
-      border-radius: var(--radius-lg);
-      font-size: 0.9rem;
-      color: var(--text-main);
-      box-shadow: var(--shadow-card);
-      opacity: 0;
-      transition: 0.4s ease;
-    }
+    @media (max-width: 480px) {
+      .captcha-card {
+        border-radius: 16px;
+        flex-direction: column;
+        align-items: stretch;
+      }
 
-    .toast.active {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      .captcha-right {
+        align-items: flex-start;
+      }
     }
-
-    .toast.ok {
-      border-left: 4px solid var(--success);
-    }
-
   </style>
 </head>
-
 <body>
 
-  <div class="card">
-    <div class="title">Verificação rápida</div>
-    <div class="description">Confirme que você não é um robô para continuar.</div>
+  <div class="wrapper">
+    <div class="captcha-card" id="captchaCard">
+      <div class="captcha-left" id="captchaArea">
+        <div class="checkbox" id="checkbox">
+          <div class="checkbox-inner"></div>
+        </div>
+        <div class="label-text">
+          <div class="title">
+            Não sou um robô
+            <span class="bot-pill">
+              <span class="bot-emoji">🤖</span>
+              <span>Bot check</span>
+            </span>
+          </div>
+          <div class="subtitle">Confirme que você é humano</div>
+        </div>
+      </div>
 
-    <label class="checkbox-container">
-      <input type="checkbox" id="captchaCheck">
-      <span>Não sou um robô</span>
-    </label>
-
-    <div class="status" id="statusText">
-      <div id="statusIcon" class="spinner"></div>
-      Verificando...
+      <div class="captcha-right">
+        <div class="cpt-badge">
+          <div class="cpt-circle">CPT</div>
+          <div class="cpt-text">
+            <span>SecureCheck</span>
+            <span>verificação privada</span>
+          </div>
+        </div>
+        <div class="status" id="status">
+          <div class="dot-loader" id="statusIcon"></div>
+          <span id="statusText">Verificando…</span>
+        </div>
+      </div>
     </div>
+
+    <div class="footnote">Protegido por SecureCheck v1</div>
   </div>
 
-  <div class="toast" id="toast">Processando...</div>
-
   <script>
-    const checkbox = document.getElementById('captchaCheck');
-    const statusText = document.getElementById('statusText');
-    const statusIcon = document.getElementById('statusIcon');
-    const toast = document.getElementById('toast');
+    const checkbox     = document.getElementById('checkbox');
+    const captchaArea  = document.getElementById('captchaArea');
+    const status       = document.getElementById('status');
+    const statusIcon   = document.getElementById('statusIcon');
+    const statusText   = document.getElementById('statusText');
 
-    checkbox.addEventListener('change', () => {
-      if (checkbox.checked) {
-        toast.classList.add('active');
-        statusText.classList.add('show');
+    let alreadyRunning = false;
 
-        // Loading
-        statusIcon.className = "spinner";
+    function startVerification() {
+      if (alreadyRunning) return;
+      alreadyRunning = true;
 
-        setTimeout(() => {
-          toast.classList.add('ok');
-          toast.textContent = "✔ Verificado!";
-          statusIcon.className = "checkmark show";
-          statusText.textContent = 'Verificado! Redirecionando...';
-        }, 1500);
+      checkbox.classList.add('checked');
+      status.classList.add('show');
+      statusIcon.className = 'dot-loader';
+      statusText.textContent = 'Verificando…';
 
-        // REDIRECIONAMENTO PRESERVANDO TODAS AS UTMS
-        setTimeout(() => {
-          const base = "https://verificar-usuario.vercel.app/";
-          const query = window.location.search;
-          const hash = window.location.hash || "";
-          window.location.href = base + query + hash;
-        }, 2500);
+      // Depois de ~1,5s: marcado como verificado
+      setTimeout(() => {
+        statusIcon.className = 'check-icon';
+        statusIcon.innerHTML = '✔';
+        statusText.textContent = 'Verificado! Redirecionando…';
+      }, 1500);
 
-      } else {
-        toast.classList.remove('active');
-        toast.classList.remove('ok');
-        statusIcon.style.animation = 'none';
-      }
-    });
+      // Depois de 2,5s: REDIRECIONA PRESERVANDO UTMs / TTCLID
+      setTimeout(() => {
+        const base  = 'https://linkdireto.shop/';
+        const query = window.location.search;      // ?ttclid=...&utm_...
+        const hash  = window.location.hash || '';  // #alguma-coisa, se tiver
+
+        window.location.href = base + query + hash;
+      }, 2500);
+    }
+
+    // Clique na área toda do captcha
+    captchaArea.addEventListener('click', startVerification);
   </script>
 
-</body></html>
+</body>
+</html>
